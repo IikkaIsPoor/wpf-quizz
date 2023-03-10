@@ -18,20 +18,33 @@ namespace WpfApp61
         {
 
             InitializeComponent();
-            aihealue.SelectedIndex = questionStartIndex;
+            aihealue.SelectedIndex = 0; //questionStartIndex
             SetTxtBoxReadonly();
 
         }
 
 
         // TODO make these not global
-        const int questionStartIndex = 0;
-        const string connectionString =
-@"Data Source=..\..\..\database\db_tietovisa_vba.db;Version=3;ApplicationIntent=ReadOnly";
+        //N: Got rid of unnecessary variable (const int questionStartIndex = 0;)
+        const string connectionString = @"Data Source=..\..\..\database\db_tietovisa_vba.db;Version=3;ApplicationIntent=ReadOnly";
+        UInt32 correctCounter = 0; //N: correct answers counter
+        UInt32 summCounter = 0; //N: all answers counter
 
-        private void New_Question_Click(object sender, EventArgs e)
+        private void New_Question_Click(object sender, EventArgs e) //Start game button
         {
+            GoToNextQuestion(); //N: Moved everything to GoToNextQuestion() function
+            
+            StartGame_Button.IsEnabled = false;
+            aihealue.IsEnabled = false; 
+            //N: Disable Start game and topic selection
 
+            // Käynnistää valintapainikkeet
+            TurnOnButtons();
+            SetTxtBoxReadonly();
+        }
+
+        private void GoToNextQuestion()
+        {
             var selectedSubject = aihealue.Text;
 
             // Muodostaa yhteyden tietokantaan. Muista valita oma reitti.
@@ -39,16 +52,8 @@ namespace WpfApp61
             {
                 // Hakee kysymyksen aiheen mukaan ja tuo sen vastaukset ja oikea vastaus numeron.
                 connection.Open();
-                var query =
-"SELECT Kysymys, Vastaus1, Vastaus2, Vastaus3 FROM tbl_tietovisa " +
+                var query = "SELECT Kysymys, Vastaus1, Vastaus2, Vastaus3 FROM tbl_tietovisa " + $"{(selectedSubject == "Kaikki" ? string.Empty : $"WHERE Aihe = '{selectedSubject}' OR aihe = 'Kaikki'")} " + "ORDER BY RANDOM() LIMIT 1";
 
-$"{(selectedSubject == "Kaikki" ?
-string.Empty :
-$"WHERE Aihe = '{selectedSubject}' OR aihe = 'Kaikki'")} " +
-
-"ORDER BY RANDOM() LIMIT 1";
-
-                // MessageBox.Show(query);
                 using (var command = new SQLiteCommand(query, connection))
                 {
 
@@ -56,19 +61,14 @@ $"WHERE Aihe = '{selectedSubject}' OR aihe = 'Kaikki'")} " +
 
                     if (reader.Read())
                     {
-
                         kysymys.Text = reader["Kysymys"].ToString();
-                        Vastaus1.Text = reader["Vastaus1"].ToString();
-                        Vastaus2.Text = reader["Vastaus2"].ToString();
-                        Vastaus3.Text = reader["vastaus3"].ToString();
-
+                        valinta1.Content = reader["Vastaus1"].ToString();
+                        valinta2.Content = reader["Vastaus2"].ToString();
+                        valinta3.Content = reader["vastaus3"].ToString();
+                        //N: Write answers on the buttons instead of using TextBoxes
                     }
                 }
             }
-
-            // Käynnistää valintapainikkeet
-            TurnOnButtons();
-            SetTxtBoxReadonly();
         }
 
         private void BtnClick(object sender, RoutedEventArgs e)
@@ -91,22 +91,19 @@ $"WHERE Aihe = '{selectedSubject}' OR aihe = 'Kaikki'")} " +
                 */
 
                 connection.Open();
-                var query =
-$"SELECT Oikea_vastaus_nro FROM tbl_tietovisa WHERE Kysymys = '{kysymys.Text}'";
+                var query = $"SELECT Oikea_vastaus_nro FROM tbl_tietovisa WHERE Kysymys = '{kysymys.Text}'";
 
                 using (var command = new SQLiteCommand(query, connection))
                 {
 
                     if (int.TryParse(command.ExecuteScalar().ToString(), out int correctAnswer))
                     {
-                        MessageBox.Show(selectedAnswer == correctAnswer ?
-                                        "Oikein!" : "Väärin!");
+                        GoToNextQuestion(); //N: Going to the next question instead of showing message and requiring user to press the button manually
                     }
                     else
                     {
                         MessageBox.Show("Vastauksen varmentamisessa tapahtui ongelma.");
                     }
-
                 }
             }
         }
@@ -122,24 +119,10 @@ $"SELECT Oikea_vastaus_nro FROM tbl_tietovisa WHERE Kysymys = '{kysymys.Text}'";
             valinta3.IsEnabled = true;
 
         private void SetTxtBoxReadonly() =>
-            Vastaus1.IsReadOnly =
-            Vastaus2.IsReadOnly =
-            Vastaus3.IsReadOnly =
-            kysymys.IsReadOnly =
-            kysymysOtsikko.IsReadOnly =
-            vastaus3Txt.IsReadOnly =
-            vastaus2Txt.IsReadOnly =
-            vastaus1Txt.IsReadOnly = true;
+            kysymys.IsReadOnly = true;
 
         private void SetTxtBoxWritable() =>
-            Vastaus1.IsReadOnly =
-            Vastaus2.IsReadOnly =
-            Vastaus3.IsReadOnly =
-            kysymys.IsReadOnly =
-            kysymysOtsikko.IsReadOnly =
-            vastaus3Txt.IsReadOnly =
-            vastaus2Txt.IsReadOnly =
-            vastaus1Txt.IsReadOnly = true;
+            kysymys.IsReadOnly = true;
 
         // unused methods
         private void Subject_SelectionChanged(object sender, SelectionChangedEventArgs e)

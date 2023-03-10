@@ -43,7 +43,7 @@
         <Label x:Name="incorrect_answ_lb" Grid.Column="2" Content="Incorrect:" Grid.Row="2" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center" Width="76" Height="32"/>
         <Button x:Name="StopGame_btn" Content="Stop" Margin="18,90,19,0" Grid.Row="1" VerticalAlignment="Top" IsEnabled="False" Height="29" Click="StopGame_btn_Click"/>
         <Label x:Name="ratio_lb" Grid.Column="2" Content="Ratio" HorizontalAlignment="Left" Margin="12,87,0,0" Grid.Row="2" VerticalAlignment="Top" Height="33" Width="80" FontSize="16"/>
-        <Label x:Name="ratio_counter" Grid.Column="3" Content="0%" HorizontalAlignment="Left" Margin="17,87,0,0" Grid.Row="2" VerticalAlignment="Top" Height="33" Width="80" FontSize="16"/>
+        <Label x:Name="ratio_counter" Grid.Column="3" Content="0%" HorizontalAlignment="Left" Margin="20,87,0,0" Grid.Row="2" VerticalAlignment="Top" Height="33" Width="80" FontSize="16"/>
 
     </Grid>
 </Window>

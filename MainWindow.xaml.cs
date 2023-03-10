@@ -32,11 +32,15 @@ namespace WpfApp61
 
         private void New_Question_Click(object sender, EventArgs e) //Start game button
         {
+            StopGame_btn.IsEnabled = true;
+            StartGame_Button.IsEnabled = 
+            aihealue.IsEnabled = false;
+
+            //N: Reset counters
+            correctCounter = 0;
+            summCounter = 0;
+
             GoToNextQuestion(); //N: Moved everything to GoToNextQuestion() function
-            
-            StartGame_Button.IsEnabled = false;
-            aihealue.IsEnabled = false; 
-            //N: Disable Start game and topic selection
 
             // Käynnistää valintapainikkeet
             TurnOnButtons();
@@ -62,13 +66,24 @@ namespace WpfApp61
                     if (reader.Read())
                     {
                         kysymys.Text = reader["Kysymys"].ToString();
+                        //N: Write answers to the buttons instead of using TextBoxes
                         valinta1.Content = reader["Vastaus1"].ToString();
                         valinta2.Content = reader["Vastaus2"].ToString();
                         valinta3.Content = reader["vastaus3"].ToString();
-                        //N: Write answers on the buttons instead of using TextBoxes
+                        
                     }
                 }
             }
+        }
+
+        private void StopGame()
+        {
+            StopGame_btn.IsEnabled = false;
+            StartGame_Button.IsEnabled = true;
+            aihealue.IsEnabled = true;
+            kysymys.Text = "";
+            TurnOffButtons();
+            
         }
 
         private void BtnClick(object sender, RoutedEventArgs e)
@@ -98,6 +113,11 @@ namespace WpfApp61
 
                     if (int.TryParse(command.ExecuteScalar().ToString(), out int correctAnswer))
                     {
+                        summCounter++;
+                        if (selectedAnswer == correctAnswer) correctCounter++;
+                        
+
+                        UpdateStats();
                         GoToNextQuestion(); //N: Going to the next question instead of showing message and requiring user to press the button manually
                     }
                     else
@@ -108,15 +128,23 @@ namespace WpfApp61
             }
         }
 
-        private void TurnOffButtons() =>
-            valinta1.IsEnabled =
-            valinta2.IsEnabled =
-            valinta3.IsEnabled = false;
+        private void UpdateStats()
+        {
+            correct_answ_counter.Content = correctCounter;
+            incorrect_answ_counter.Content = summCounter - correctCounter;
+            if (correctCounter > 0 && summCounter > 0)
+            ratio_counter.Content = Math.Round(100.0f * ((float)correctCounter / (summCounter - correctCounter)), 2) + "%";
+        }
 
-        private void TurnOnButtons() =>
-            valinta1.IsEnabled =
-            valinta2.IsEnabled =
-            valinta3.IsEnabled = true;
+        private void TurnOffButtons() => //N: Hide all buttons
+            valinta1.Visibility =
+            valinta2.Visibility =
+            valinta3.Visibility = Visibility.Hidden; 
+
+        private void TurnOnButtons() => //N: Show all buttons
+            valinta1.Visibility =
+            valinta2.Visibility =
+            valinta3.Visibility = Visibility.Visible;
 
         private void SetTxtBoxReadonly() =>
             kysymys.IsReadOnly = true;
@@ -143,6 +171,11 @@ namespace WpfApp61
         }
         private void Vastaus3_TextChanged(object sender, TextChangedEventArgs e)
         {
+        }
+
+        private void StopGame_btn_Click(object sender, RoutedEventArgs e)
+        {
+            StopGame();
         }
     }
 }

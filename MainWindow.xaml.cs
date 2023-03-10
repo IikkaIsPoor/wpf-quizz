@@ -25,22 +25,22 @@ namespace WpfApp61
 
 
         // TODO make these not global
-        //N: Got rid of unnecessary variable (const int questionStartIndex = 0;)
+        // Got rid of unnecessary variable (const int questionStartIndex = 0;)
         const string connectionString = @"Data Source=..\..\..\database\db_tietovisa_vba.db;Version=3;ApplicationIntent=ReadOnly";
-        UInt32 correctCounter = 0; //N: correct answers counter
-        UInt32 summCounter = 0; //N: all answers counter
+        UInt32 correctCounter = 0; // correct answers counter
+        UInt32 summCounter = 0; // all answers counter
 
-        private void New_Question_Click(object sender, EventArgs e) //Start game button
+        private void New_Question_Click(object sender, EventArgs e) //Start game
         {
             StopGame_btn.IsEnabled = true;
             StartGame_Button.IsEnabled = 
             aihealue.IsEnabled = false;
 
-            //N: Reset counters
+            // Reset counters
             correctCounter = 0;
             summCounter = 0;
 
-            GoToNextQuestion(); //N: Moved everything to GoToNextQuestion() function
+            GoToNextQuestion(); // Moved everything to GoToNextQuestion() function
 
             // Käynnistää valintapainikkeet
             TurnOnButtons();
@@ -66,7 +66,7 @@ namespace WpfApp61
                     if (reader.Read())
                     {
                         kysymys.Text = reader["Kysymys"].ToString();
-                        //N: Write answers to the buttons instead of using TextBoxes
+                        // Write answers to the buttons instead of using TextBoxes
                         valinta1.Content = reader["Vastaus1"].ToString();
                         valinta2.Content = reader["Vastaus2"].ToString();
                         valinta3.Content = reader["vastaus3"].ToString();
@@ -118,7 +118,7 @@ namespace WpfApp61
                         
 
                         UpdateStats();
-                        GoToNextQuestion(); //N: Going to the next question instead of showing message and requiring user to press the button manually
+                        GoToNextQuestion(); // Going to the next question instead of showing message and requiring user to press the button manually
                     }
                     else
                     {
@@ -136,12 +136,12 @@ namespace WpfApp61
             ratio_counter.Content = Math.Round(100.0f * ((float)correctCounter / (summCounter - correctCounter)), 2) + "%";
         }
 
-        private void TurnOffButtons() => //N: Hide all buttons
+        private void TurnOffButtons() => // Hide all buttons
             valinta1.Visibility =
             valinta2.Visibility =
             valinta3.Visibility = Visibility.Hidden; 
 
-        private void TurnOnButtons() => //N: Show all buttons
+        private void TurnOnButtons() => // Show all buttons
             valinta1.Visibility =
             valinta2.Visibility =
             valinta3.Visibility = Visibility.Visible;
@@ -175,7 +175,7 @@ namespace WpfApp61
 
         private void StopGame_btn_Click(object sender, RoutedEventArgs e)
         {
-            StopGame();
+            StopGame(); // Stop game
         }
     }
 }

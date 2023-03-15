@@ -39,6 +39,7 @@ namespace WpfApp61
             // Reset counters
             correctCounter = 0;
             summCounter = 0;
+            UpdateStats();
 
             GoToNextQuestion(); // Moved everything to GoToNextQuestion() function
 

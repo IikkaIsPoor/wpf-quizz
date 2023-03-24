@@ -13,6 +13,7 @@ namespace WpfApp61
 
     public partial class MainWindow : Window
     {
+
         DispatcherTimer timer;
         public MainWindow()
         {
@@ -58,7 +59,7 @@ namespace WpfApp61
                 // Hakee kysymyksen aiheen mukaan ja tuo sen vastaukset ja oikea vastaus numeron.
                 connection.Open();
                 var query = "SELECT Kysymys, Vastaus1, Vastaus2, Vastaus3 FROM tbl_tietovisa " + $"{(selectedSubject == "Kaikki" ? string.Empty : $"WHERE Aihe = '{selectedSubject}' OR aihe = 'Kaikki'")} " + "ORDER BY RANDOM() LIMIT 1";
-
+                
                 using (var command = new SQLiteCommand(query, connection))
                 {
 
@@ -117,7 +118,6 @@ namespace WpfApp61
                         summCounter++;
                         if (selectedAnswer == correctAnswer) correctCounter++;
                         
-
                         UpdateStats();
                         GoToNextQuestion(); // Going to the next question instead of showing message and requiring user to press the button manually
                     }
@@ -182,6 +182,16 @@ namespace WpfApp61
         private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("1. Valitse aihe " + Environment.NewLine + "2. Aloita peli" + Environment.NewLine + "3. Vastaa kysymyksiin. Oikeat ja väärät vastaukset päivittyvät reaaliajassa." + Environment.NewLine + "4. Kun haluat lopettaa pelin paina 'Lopeta peli'." + Environment.NewLine + "5. Kun haluat sulkea ohjelman, paina 'Sulje ohjelma'" + Environment.NewLine + Environment.NewLine + "Kysymyksien määrä näkyy aihevalinassa sulkeissa. Kysymykset jatkuu loputtomiin niin kyselyn voi lopettaa manuaalisesti kun on vastannut tarpeeksi moneen kysymykseen." );
         }
     }
 }
